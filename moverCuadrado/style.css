@@ -1,0 +1,28 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    
+  }
+  
+  #container {
+    width: 512px;
+    height: 512px;
+    background: green;
+  }
+  
+  #square {
+    width: 64px;
+    height: 64px;
+    background: red;
+    position: absolute;
+    left: 0; 
+    top: 0;
+  }
+  
+  .visible {
+    display: block
+  }
+  
+  .hidden {
+    display:none;
+  }

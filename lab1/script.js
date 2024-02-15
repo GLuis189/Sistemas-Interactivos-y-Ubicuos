@@ -73,6 +73,39 @@ if (navigator.geolocation && window.navigator.vibrate) {
     });
     });
 
+    // const route = document.getElementById('route');
+    // route.addEventListener('click', function() {
+    //     console.log("route");
+    //     // Elimina las rutas anteriores
+    //     map.eachLayer(function(layer) {
+    //         if (layer instanceof L.Polyline) {
+    //             map.removeLayer(layer);
+    //         }
+    //     });
+
+    //     // Obtiene las coordenadas de la posición actual
+    //     navigator.geolocation.getCurrentPosition(function(position) {
+    //         let pos = [position.coords.latitude, position.coords.longitude];
+    //         console.log("route");
+
+    //         // Dibuja la ruta desde la posición actual hasta el marcador más cercano
+    //         markers.forEach((m) => {
+    //             let coord = m.getLatLng();
+    //             L.Routing.control({
+    //                 waypoints: [
+    //                     L.latLng(pos),
+    //                     L.latLng(coord)
+    //                 ],
+    //                 router: new L.Routing.osrmv1({
+    //                     serviceUrl: 'https://router.project-osrm.org/route/v1'
+    //                 }),
+    //                 routeWhileDragging: true
+    //             }).addTo(map);
+    //             console.log("route");
+    //         });
+    //     });
+    // });
+
     // ACtualizar la posición del marcador yo y la vista del mapa y vibrar el dispositivo en funcion de la distancia a el marcador mas cercano
     navigator.geolocation.watchPosition(function(position) {
         let pos = [position.coords.latitude, position.coords.longitude];
@@ -92,6 +125,7 @@ if (navigator.geolocation && window.navigator.vibrate) {
                 console.log("Eliminado")
             }
         });
+
         // Hacer vibrar el dispositivo en función de la distancia al marcador más cercano
         setInterval(function() {
             markers.forEach((m) => {
@@ -118,6 +152,8 @@ if (navigator.geolocation && window.navigator.vibrate) {
             });
         }, 1000 * 15); // El intervalo de tiempo en milisegundos, 1000 ms = 1 segundo * 15 = 15 segundos
     });
+
+
 } else {
     // El navegador no soporta la geolocalización
     console.log("Geolocalización no es soportada por tu navegador.");

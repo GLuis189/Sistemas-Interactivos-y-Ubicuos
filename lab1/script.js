@@ -32,11 +32,11 @@ if (navigator.geolocation && window.navigator.vibrate) {
         let pos = [position.coords.latitude, position.coords.longitude];
 
         // Inicializa el mapa con la posición actual
-        map = L.map('map').setView(pos, 18);
+        map = L.map('map').setView(pos, 16);
 
         // Añade la capa de mapa
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
+            maxZoom: 20,
         }).addTo(map);
 
         // Dibuja el marcador en el mapa
@@ -47,10 +47,17 @@ if (navigator.geolocation && window.navigator.vibrate) {
         // Obtiene las coordenadas del evento
         let coord = [e.latlng.lat, e.latlng.lng];
 
-        // Dibuja el marcador en el mapa
-        let marker = L.marker(coord, {icon : marcadorIcon}).addTo(map);
-        marker.id = coord;
-        markers.push(marker);
+        // Dibujar el marcador en el mapa si no hay otro marcador en la misma posición o cercano
+        let existe = false;
+        markers.forEach((m) => {
+            if (m.getLatLng().distanceTo(e.latlng) < 10) {
+                existe = true;
+            }
+        });
+        if (!existe) {
+            let marker = L.marker(coord, {icon : marcadorIcon}).addTo(map);
+            markers.push(marker);
+        }
         
 
         // Al mantener dos segundos el click o touch en un marcador, se elimina el marcador
@@ -70,9 +77,9 @@ if (navigator.geolocation && window.navigator.vibrate) {
     navigator.geolocation.watchPosition(function(position) {
         let pos = [position.coords.latitude, position.coords.longitude];
     
-        // Actualiza la posición del marcador y la vista del mapa
+        // Actualizar la posición del marcador y la vista del mapa
         yo.setLatLng(pos);
-        map.flyTo(pos, 18);
+        map.flyTo(pos, 16);
         markers.forEach((m) => {
             let distancia = yo.getLatLng().distanceTo(m.getLatLng());
             if (distancia < 10) {

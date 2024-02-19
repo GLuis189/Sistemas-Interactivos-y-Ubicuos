@@ -2,7 +2,7 @@
 document.addEventListener('contextmenu', (event) =>{
     event.preventDefault();
 });
-// alert("Hola, en esta aplicación continene las siguientes aplicaciones: \n 1. Poner marcadores al hacer click. \n 2. Eliminar marcadores al manter pulsado. \n 3. Eliminar marcadores al agitar el dispositivo. \n 4. Vibración dependiente de la distancia a los marcadores. \n 5. Simular una ruta al marcador mas cercano (solo funciona si no se simula la ubicación).");
+alert("Hola, en esta aplicación continene las siguientes aplicaciones: \n 1. Poner marcadores al hacer click. \n 2. Lista de nombres de los marcadores guardados \n 3. Eliminar marcadores al manter pulsado. \n 4. Eliminar marcadores al agitar el dispositivo. \n 5. Vibración dependiente de la distancia a los marcadores. (A veces solo funciona al simular la ubicación) \n 6. Simular una ruta al marcador mas cercano (solo funciona si no se simula la ubicación).");
 const manIcon = L.icon({
     iconUrl: 'man.png',
 
@@ -16,6 +16,20 @@ const marcadorIcon = L.icon({
     iconSize:     [50, 50], // size of the icon
     iconAnchor:   [25, 50], // point of the icon which will correspond to marker's location
 });
+
+// Funcion para que cuando se agrege un marcador, se añada a la lisat de marcadores en el html
+const mardarcadores = document.getElementById('marcadores');
+function añadirMarcador(marker){
+    let li = document.createElement('li');
+    li.dataset.txt = marker.txt;
+    li.appendChild(document.createTextNode(marker.txt));
+    mardarcadores.appendChild(li);
+}
+// Cuando se elimina un marcador tambien lo hace de la lista de marcadores en el html
+function eliminarMarcador(marker){
+    let li = document.querySelector(`li[data-txt="${marker.txt}"]`);
+    li.remove();
+}
 
 // Vibracion escalabre, variar rutas, mantener para eliminar marcadores
 
@@ -55,17 +69,27 @@ if (navigator.geolocation && window.navigator.vibrate) {
             }
         });
         if (!existe) {
-            let marker = L.marker(coord, {icon : marcadorIcon}).addTo(map);
+            // let marker = L.marker(coord, {icon : marcadorIcon}).bindPopup(prompt("Añade el marcador: ")).openPopup().addTo(map);
+            let txt = prompt("Añade el marcador: ");
+            let marker = L.marker(coord, {icon : marcadorIcon}).bindPopup(txt).addTo(map);
+            marker.txt = txt;
+            // marker.openPopup();
+            // Añade el marcador a la lista de marcadores
             markers.push(marker);
+            // Añade el marcador a la lista del html
+            añadirMarcador(marker);
         }
         
 
         // Al mantener dos segundos el click o touch en un marcador, se elimina el marcador
         markers.forEach((pulsado) => pulsado.on("contextmenu", function(e) {
+            // console.log("Eliminado")
             // Obtiene el marcador
             let marker = e.target;
             // Elimina el marcador del mapa
             map.removeLayer(marker);
+            // Elimina el marcador de la lista
+            eliminarMarcador(marker);
             // Elimina el marcador del arreglo
             markers = markers.filter(function(m) {
                 return m !== marker;
@@ -81,10 +105,11 @@ if (navigator.geolocation && window.navigator.vibrate) {
             alert("No hay marcadores para trazar la ruta");
             return;
         }
+        // Cambiar los botones
         route.style.display = "none";
         cancel.style.display = "block";
 
-        console.log("route");
+        // console.log("route");
         // Elimina las rutas anteriores
         map.eachLayer(function(layer) {
             if (layer instanceof L.Polyline) {
@@ -95,7 +120,7 @@ if (navigator.geolocation && window.navigator.vibrate) {
         // Obtiene las coordenadas de la posición actual
         navigator.geolocation.getCurrentPosition(function(position) {
             let pos = [position.coords.latitude, position.coords.longitude];
-            console.log("route");
+            // console.log("route");
 
             // Dibuja la ruta desde la posición actual hasta el marcador más cercano
             markers.forEach((m) => {
@@ -145,7 +170,7 @@ if (navigator.geolocation && window.navigator.vibrate) {
                 return marker !== m;
             });
             navigator.vibrate([1000]);
-            console.log("Eliminado")
+            // console.log("Eliminado")
         }
     });
 
@@ -166,22 +191,22 @@ if (navigator.geolocation && window.navigator.vibrate) {
 
             let distancia = yo.getLatLng().distanceTo(closestMarker.getLatLng());
 
-            console.log("Vibrando")
+            // console.log("Vibrando")
             if (distancia < 50) {
                 navigator.vibrate([700,50,700]);
-                console.log("Vibrando 50");
+                // console.log("Vibrando 50");
             }
             else if (distancia < 100) {
                 navigator.vibrate([500]);
-                console.log("Vibrando 100");
+                // console.log("Vibrando 100");
             }
             else if (distancia < 200) {
                 navigator.vibrate([200]);
-                console.log("Vibrando 200");
+                // console.log("Vibrando 200");
             }
             else if (distancia < 400) {
                 navigator.vibrate([100]);
-                console.log("Vibrando 400");
+                // console.log("Vibrando 400");
             }
             else{
                 navigator.vibrate([100]);
@@ -216,7 +241,8 @@ if (navigator.geolocation && window.navigator.vibrate) {
                     map.removeLayer(m);
                 });
                 markers = [];
-                console.log("Todos los marcadores han sido eliminados");
+                mardarcadores.innerHTML = "";
+                // console.log("Todos los marcadores han sido eliminados");
             }
 
             lastX = x;
@@ -230,5 +256,5 @@ if (navigator.geolocation && window.navigator.vibrate) {
 
 } else {
     // El navegador no soporta la geolocalización
-    console.log("Geolocalización no es soportada por tu navegador.");
+    console.log("Geolocalización o vibración no soportada por tu navegador.");
 }

@@ -69,14 +69,24 @@ if (navigator.geolocation && window.navigator.vibrate) {
             }
         });
         if (!existe) {
-            // let marker = L.marker(coord, {icon : marcadorIcon}).bindPopup(prompt("Añade el marcador: ")).openPopup().addTo(map);
             let txt = prompt("Añade el marcador: ");
+            // No puede añadir dos marcadpres con el mismo texto
+            markers.forEach((m) => {
+                if (m.txt === txt) {
+                    existe = true;
+                }
+            });
+            if (existe) {
+                alert("El marcador ya existe");
+                return;
+            }
+            // Dibujar el marcador en el mapa
             let marker = L.marker(coord, {icon : marcadorIcon}).bindPopup(txt).addTo(map);
             marker.txt = txt;
             // marker.openPopup();
             // Añade el marcador a la lista de marcadores
             markers.push(marker);
-            // Añade el marcador a la lista del html
+            // // Añade el marcador a la lista del html
             añadirMarcador(marker);
         }
         
@@ -159,7 +169,13 @@ if (navigator.geolocation && window.navigator.vibrate) {
 
     // Actualizar la posición del marcador y la vista del mapa
     yo.setLatLng(pos);
-    map.flyTo(pos, 16);
+    
+    // Al pulsar el boton de centrar se centra en la vista de yo
+    const center = document.getElementById('centrar');
+    center.addEventListener('click', function() {
+        map.flyTo(pos, 16);
+
+    });
 
     markers.forEach((m) => {
         let distancia = yo.getLatLng().distanceTo(m.getLatLng());
@@ -209,10 +225,10 @@ if (navigator.geolocation && window.navigator.vibrate) {
                 // console.log("Vibrando 400");
             }
             else{
-                navigator.vibrate([100]);
+                navigator.vibrate([0]);
             }
         }
-        }, 1000*10); // El intervalo de tiempo en milisegundos, 1000 ms = 1 segundo * 15 = 15 segundos
+        }, 1000*1); // El intervalo de tiempo en milisegundos, 1000 ms = 1 segundo * 10 = 10 segundos
     });
     
     // Definir un umbral de agitación

@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 
-const PORT = 8080;
+const PORT = 80;
 
 const serveStaticFile = async (file) => {
   return new Promise((resolve, reject) => {
